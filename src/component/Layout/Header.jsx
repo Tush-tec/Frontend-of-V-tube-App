@@ -100,7 +100,7 @@ const Header = () => {
           <Route path="contact" element={<Contact/>}/>
           <Route path="/sign-up" element={<SignUpForm/>}/>
           <Route path="/log-in" element={<LoginForm/>}/>
-          <Route path="/video" element={<GetAllVideoCompo/>}/>
+          <Route path="/video/*" element={<GetAllVideoCompo/>}/>
         </Routes>
       </main>
     </>

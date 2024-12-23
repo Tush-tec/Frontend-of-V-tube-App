@@ -50,7 +50,6 @@ const VideoUpload = () => {
 
     // Effect to handle success message and redirect
     if (successMessage) {
-        // After video is successfully uploaded, navigate to the user-video route
         navigate('/video');
     }
 
@@ -124,7 +123,7 @@ const VideoUpload = () => {
                     <button
                         type="submit"
                         className={`${
-                            loading ? 'bg-gray-500' : 'bg-[#9BB6BD] hover:bg-[#7a8e97]'
+                            loading ? 'bg-gray-500' : 'bg-[#43565A] hover:bg-[#7a8e97]'
                         } text-white font-semibold py-3 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
                         disabled={loading}
                     >

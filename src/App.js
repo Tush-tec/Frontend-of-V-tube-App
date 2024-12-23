@@ -2,23 +2,25 @@ import './App.css';
 import Header from './component/Layout/Header';
 import Footer from './component/Layout/Footer';
 import AuthenticatePage from './component/Pages/AuthenticatePage';
-import GetAllVideoCompo from './component/Layout/GetAllVideoCompo';
 import { Route, Routes } from 'react-router-dom';
-import { useAuth } from '../src/component/utils/Auth'; // Import the custom hook
+import { useAuth } from '../src/component/utils/Auth'; 
+import VideoPlay from './component/Features/VideoPlay';
+import VideoUpload from './component/Features/VideoUpload';
+import Video from '../src/component/Features/Video'
+
 
 function App() {
-  const { isAuthenticated } = useAuth(); // Get the auth state
+  const { isAuthenticated } = useAuth(); 
 
   return (
     <>
       <Header />
       <main>
         <Routes>
-          {!isAuthenticated ? (
-            <Route path="*" element={<AuthenticatePage />} />
-          ) : (
-            <Route path="/video" element={<GetAllVideoCompo />} />
-          )}
+            <Route path="/" element={<AuthenticatePage />} />
+            <Route path="/video" element={<Video />} />
+            <Route path="/video/:videoId" element={<VideoPlay />} />
+            <Route path = '/upload-video' element={<VideoUpload/>}/>
         </Routes>
       </main>
       <Footer />

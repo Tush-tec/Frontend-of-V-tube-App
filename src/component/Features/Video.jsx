@@ -1,83 +1,140 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllVideos } from "./VideoSlice"; // Adjust the path as necessary
-import { Link, Route, Routes, useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import VideoUpload from "./VideoUpload";
+import { useNavigate } from "react-router-dom";
+import { fetchAllVideos } from "./VideoSlice";
+import { useSpring, animated } from "@react-spring/web";
+import videojs from "video.js";
+import "video.js/dist/video-js.css";
 
 const VideoList = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Hook for navigation
-  const { videoList, loading, error } = useSelector((state) => state.videos); // Access videos from state
+  const { videoList, loading, error } = useSelector((state) => state.videos);
+
+  const fadeInStyles = useSpring({
+      from: { opacity: 0 },
+      to: { opacity: 1 },
+      config: { duration: 800 },
+    });
+  
+    const slideUpStyles = useSpring({
+      from: { transform: "translateY(50%)", opacity: 0 },
+      to: { transform: "translateY(0%)", opacity: 1 },
+      config: { duration: 1000 },
+    });
+  
+
+  // Create a ref for each video player
+  const videoRefs = useRef([]);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(null);
 
   // Fetch videos when the component mounts
   useEffect(() => {
     dispatch(fetchAllVideos());
   }, [dispatch]);
 
-  // Render loading or error message if applicable
-  if (loading)
-    return <div className="text-center text-xl font-semibold">Loading...</div>;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  // Initialize video.js for each video element after the component mounts
+  useEffect(() => {
+    if (videoList.length > 0) {
+      videoList.forEach((video, index) => {
+        if (videoRefs.current[index] && !videoRefs.current[index].player) {
+          const player = videojs(videoRefs.current[index], {
+            autoplay: false,
+            controls: true,
+            preload: "auto",
+          });
+          videoRefs.current[index].player = player;
+        }
+      });
+    }
 
-  // Ensure videoList is defined before mapping
+    // Clean up players on unmount or when video list changes
+    return () => {
+      videoList.forEach((video, index) => {
+        if (videoRefs.current[index] && videoRefs.current[index].player) {
+          videoRefs.current[index].player.dispose();
+          videoRefs.current[index].player = null;
+        }
+      });
+    };
+  }, [videoList]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
   const isVideoListAvailable = Array.isArray(videoList) && videoList.length > 0;
 
-  // Function to handle redirect to upload-video form
-  const handleUploadClick = () => {
-    navigate("/upload-video"); // Navigate to the upload-video page
+  const handleVideoClick = (videoId) => {
+    navigate(`/video/${videoId}`);
+  };
+
+  const handleUploadButtonClick = () => {
+    navigate("/upload-video");
   };
 
   return (
-    <>
-      <div className="container mx-auto p-6 flex flex-col min-h-screen">
-        {/* Video List */}
-        <div className="flex-grow">
-          {!isVideoListAvailable ? (
-            <p className="text-center text-lg">No videos available</p>
-          ) : (
-            <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {videoList.map((video) => (
-                <li
-                  key={video._id}
-                  className="bg-white shadow-lg rounded-lg overflow-hidden"
-                >
-                  <div className="relative">
-                    <img
-                      src={video.thumbnail}
-                      alt={video.title}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-3">
-                      <h3 className="text-white font-semibold text-lg">
-                        {video.title}
-                      </h3>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-gray-600 text-sm">{video.description}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+    <div className="container mx-auto p-6 flex flex-col min-h-screen">
 
-        {/* Upload Button at the bottom, centered */}
-        <div className="flex justify-center items-center mt-auto mb-6">
-          <button
-            onClick={handleUploadClick}
-            className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
-          >
-            Upload Video
-          </button>
-        </div>
+      <div
+        className="flex justify-between items-center mb-6 p-4"
+        style={{ backgroundColor: "#6b7071" }}
+      >
+        <h1 className="text-2xl font-bold text-white">Video List</h1>
+
+        <div className="mt-12 flex justify-center">
+        <animated.div
+          style={fadeInStyles}
+          className="w-16 h-16 rounded-full shadow-lg bg-[#2e2f2f] flex items-center justify-center animate-bounce"
+          
+        >
+          <p className="text-white font-bold">V-Tube</p>
+        </animated.div>
       </div>
 
-      {/* Define your routes here, in a higher-level component */}
-      <Routes>
-        <Route path="/upload-video" element={<VideoUpload />} />
-      </Routes>
-    </>
+        <button
+          onClick={handleUploadButtonClick}
+          className="px-4 py-2 bg-[#F5F7F8] text-Black rounded-lg hover:bg-blue-600 transition duration-200"
+        >
+          Upload Video
+        </button>
+      </div>
+
+      <div className="flex-grow">
+        {!isVideoListAvailable ? (
+          <p>No videos available</p>
+        ) : (
+          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {videoList.map((video, index) => (
+              <li
+                key={video._id}
+                className="bg-white rounded-lg shadow-lg overflow-hidden"
+                onClick={() => handleVideoClick(video._id)}
+              >
+                <div className="w-full h-full flex flex-col">
+                  {/* Video Card Content */}
+                  <div className="w-full h-48 bg-gray-200">
+                    <video
+                      ref={(el) => (videoRefs.current[video._id] = el)}
+                      className="video-js vjs-default-skin w-full h-full object-cover"
+                      style={{ height: "100%", width: "100%" }}
+                      controls
+                      onClick={handleVideoClick}
+                    >
+                      <source src={video.videoFile} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                  <div className="p-4 flex flex-col flex-grow">
+                    <h2 className="text-lg font-semibold truncate">{video.title}</h2>
+                    <p className="text-sm text-gray-600 truncate">{video.description}</p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
   );
 };
 

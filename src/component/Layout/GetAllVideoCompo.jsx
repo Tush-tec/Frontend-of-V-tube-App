@@ -6,8 +6,8 @@ const GetAllVideoCompo = () => {
   
   return (
     <>
-    <Video/>
-    <VideoUpload/>
+    {/* <Video/> */}
+    {/* <VideoUpload/> */}
     </>
   )
 }

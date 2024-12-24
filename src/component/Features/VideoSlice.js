@@ -27,7 +27,8 @@ const fetchVideoById = createAsyncThunk(
         try {
             const response = await axios.get(`${baseURL}/${videoId}`, { withCredentials: true });
             console.log("check id for video",response.data.data.videoFile);
-            return response.data.data.videoFile;
+            console.log("check Views and  getting owner", response.data)
+            return response.data.data;
            
         } catch (error) {
             const errorMessage = error.response?.data?.message || error.message || "Unknown error occurred";

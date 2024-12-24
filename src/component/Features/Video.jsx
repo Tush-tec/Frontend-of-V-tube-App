@@ -22,42 +22,13 @@ const VideoList = () => {
       to: { transform: "translateY(0%)", opacity: 1 },
       config: { duration: 1000 },
     });
-  
-
-  // Create a ref for each video player
-  const videoRefs = useRef([]);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(null);
 
   // Fetch videos when the component mounts
   useEffect(() => {
     dispatch(fetchAllVideos());
   }, [dispatch]);
 
-  // Initialize video.js for each video element after the component mounts
-  useEffect(() => {
-    if (videoList.length > 0) {
-      videoList.forEach((video, index) => {
-        if (videoRefs.current[index] && !videoRefs.current[index].player) {
-          const player = videojs(videoRefs.current[index], {
-            autoplay: false,
-            controls: true,
-            preload: "auto",
-          });
-          videoRefs.current[index].player = player;
-        }
-      });
-    }
-
-    // Clean up players on unmount or when video list changes
-    return () => {
-      videoList.forEach((video, index) => {
-        if (videoRefs.current[index] && videoRefs.current[index].player) {
-          videoRefs.current[index].player.dispose();
-          videoRefs.current[index].player = null;
-        }
-      });
-    };
-  }, [videoList]);
+  
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -104,26 +75,26 @@ const VideoList = () => {
           <p>No videos available</p>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {videoList.map((video, index) => (
-              <li
+            {videoList.map((video) => (
+             <li
                 key={video._id}
                 className="bg-white rounded-lg shadow-lg overflow-hidden"
                 onClick={() => handleVideoClick(video._id)}
               >
                 <div className="w-full h-full flex flex-col">
-                  {/* Video Card Content */}
-                  <div className="w-full h-48 bg-gray-200">
-                    <video
-                      ref={(el) => (videoRefs.current[video._id] = el)}
-                      className="video-js vjs-default-skin w-full h-full object-cover"
-                      style={{ height: "100%", width: "100%" }}
-                      controls
-                      onClick={handleVideoClick}
-                    >
-                      <source src={video.videoFile} type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
-                  </div>
+                  {/* Video Card Content, Where thumbnail are  */}
+                  <div className="w-full h-48 bg-gray-200 relative group">
+                  <img
+                    src={video.thumbnail}
+                    alt={`${video.title} thumbnail`}
+                    className="w-full h-full object-cover group-hover:opacity-50"
+                  />
+                  <button
+                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition duration-300"
+                  >
+                    Play
+                  </button>
+                </div>
                   <div className="p-4 flex flex-col flex-grow">
                     <h2 className="text-lg font-semibold truncate">{video.title}</h2>
                     <p className="text-sm text-gray-600 truncate">{video.description}</p>

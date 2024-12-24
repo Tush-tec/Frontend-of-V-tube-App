@@ -1,13 +1,6 @@
 import React, { useState } from "react";
 import { Link,Routes, Route } from "react-router-dom";
-import Home from '../Pages/Home'
-import About from '../Pages/About'
-import Services from '../Pages/Services'
-import Contact from "../Pages/Contact";
-import SignUpForm from "../Form/SignUpForm";
-import LoginForm from "../Form/LoginForm";
-import GetAllVideoCompo from "./GetAllVideoCompo";
-import HomePage from "../Pages/HomePage";
+
 
 
 const Header = () => {
@@ -92,17 +85,7 @@ const Header = () => {
         </div>
       </div>
     </header>
-    <main>
-        <Routes>
-          <Route path="/home/*" element={<HomePage/>}/>
-          <Route path="/about" element={<About/>}/>
-          <Route path="/services"element={<Services/>}/>
-          <Route path="contact" element={<Contact/>}/>
-          <Route path="/sign-up" element={<SignUpForm/>}/>
-          <Route path="/log-in" element={<LoginForm/>}/>
-          <Route path="/video/*" element={<GetAllVideoCompo/>}/>
-        </Routes>
-      </main>
+    
     </>
   );
 };

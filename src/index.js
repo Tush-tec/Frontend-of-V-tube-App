@@ -11,7 +11,7 @@ import store from "./component/reduxStore";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <AuthProvider value={AuthContext}>
     <ThemeProvider>
       <Provider store={store}>
@@ -21,7 +21,7 @@ root.render(
       </Provider>
     </ThemeProvider>
     </AuthProvider>
-  </React.StrictMode>
+  //  </React.StrictMode>
 );
 
 

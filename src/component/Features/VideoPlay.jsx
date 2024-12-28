@@ -28,7 +28,8 @@ const VideoPlay = () => {
       playerRef.current = videojs(videoRef.current, {
         autoplay: false,
         controls: true,
-        preload: "auto",
+        defaultPlaybackRate:1,
+        playbackRate:3[0.00, 78.93],
         responsive: true,
         fluid: true,
         controlBar: {
@@ -44,7 +45,7 @@ const VideoPlay = () => {
       // Check if playerRef is initialized and video element still exists in DOM
       if (playerRef.current && videoRef.current && videoRef.current.parentElement) {
         console.log("Disposing Video.js Player...");
-        playerRef.current.dispose(); // Dispose the player
+        // playerRef.current.dispose(); // Dispose the player
         playerRef.current = null;
       }
     };

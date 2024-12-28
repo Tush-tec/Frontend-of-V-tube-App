@@ -53,6 +53,8 @@ const VideoUpload = () => {
         navigate('/video');
     }
 
+
+
     return (
         <div className="max-w-3xl mx-auto p-6 bg-[#F5F7F8] shadow-lg rounded-lg mt-10 mb-10">
             <h2 className="text-3xl font-semibold mb-6 text-center text-black">Upload Your Video</h2>
